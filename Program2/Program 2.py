@@ -1,5 +1,5 @@
-import pandas as pd
 import numpy as np
+from sklearn.metrics import confusion_matrix
 
 class Bayes(object):
     def __init__(self, filename):
@@ -18,6 +18,3 @@ class Bayes(object):
 a = Bayes("spambase.data")
 print(a.trainData.shape)
 print(a.testData.shape)
-
-
-
