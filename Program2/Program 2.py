@@ -10,6 +10,10 @@ class Bayes(object):
         testData = data[2300:,:]
         return trainData, testData
 
+    #Template for later
+    def probModel(self):
+        return 0    
+
 a = Bayes("spambase.data")
 print(a.trainData.shape)
 
