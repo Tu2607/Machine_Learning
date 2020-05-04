@@ -7,7 +7,6 @@ class Bayes(object):
     
     def splitData(self,filename):
         data = np.loadtxt(filename, delimiter= ",")
-        print(data.shape)
         trainData = data[:2300,:] #This is hard coding
         testData = data[2301:,:]
         return trainData, testData
