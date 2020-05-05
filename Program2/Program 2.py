@@ -5,7 +5,8 @@ from sklearn.naive_bayes import GaussianNB
 class Bayes(object):
     def __init__(self, filename):
         self.trainData, self.testData = self.splitData(filename)
-    
+        self.TrainingpriorProb, self.trainingmeanSD = self.probModel()
+
     def splitData(self,filename):
         data = np.loadtxt(filename, delimiter= ",")
         trainData = data[:2300,:] #Selecting 2300 rows for the trainData set, 1st half of the data
@@ -19,13 +20,20 @@ class Bayes(object):
         nonspam_percent = 100 - spam_percent
         return spam_percent, nonspam_percent
 
+    #Return the mean and standard deviation of each class
+    def mean_SD(self,array):
+        return np.mean(array), np.std(array)
+
     #The last column of the spambase data denote whether the email is spam(1) or not spam(0)
     def probModel(self):
         prior = []
+        mean_SD = []
         for i in range(2300):
             spam, nonspam = self.priorProb(self.trainData[i,:])
             prior.append((spam,nonspam)) 
-        return np.array(prior)
-
+            mean_SD.append(self.mean_SD(self.trainData[i,:]))
+        return np.asarray(prior), np.asarray(mean_SD)
+    
+    
 a = Bayes("spambase.data")
-b = a.probModel()
+
