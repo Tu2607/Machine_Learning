@@ -44,7 +44,38 @@ class Naive_Bayes(object):
     probability_test_not_spam = 1 - probability_test_spam  
 
     # MEAN AND STANDARD DEVIATION FOR FEATURES
+    for a_feature in range(0, features): 
+      # we need to separate our spam data from our non-spam data 
+      spam_data, not_spam_data = [], []
 
+      for row in range(len(train_data)): 
+        # if we get a training input value of 1, it is spam, 0 means not-spam
+        if(target_train[r] == 1): 
+          spam_data.append(train_data[r][feature])
+        else: 
+          not_spam_data.append(train_data[r][feature])
+
+      # find the mean of the spam data in the training set
+      train_mean_spam_data.append(np.mean(spam_data))
+
+      # find the mean of the not-spam data in the training set
+      train_mean_not_spam_data.append(np.mean(not_spam_data))
+
+      # find the standard deviation of the spam data in the training set
+      train_std_spam_data.append(np.std(spam_data))
+
+      # find the standard deviation of the not-spam data in the training set
+      train_std_not_spam_data.append(np.std(not_spam_data))
+       
+    # SPECIAL CASE FOR STANDARD DEVIATION
+    # If any of the features has zero standard deviation, assign it a "minimal" standard
+    # deviation (e.g., 0.0001) to avoid a divide-by-zero error in Gaussian Naive Bayes
+    for i in range(len(train_std_spam_data)): 
+      if(train_std_spam_data[i] == 0): 
+        train_std_spam_data[i] = std
+
+       elif(train_std_not_spam_data[i] == 0): 
+        train_std_not_spam_data[i] = std
 
 input = Naive_Bayes("spambase.data")
 print(input.train_data.shape)
