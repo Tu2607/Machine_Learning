@@ -76,6 +76,18 @@ class Naive_Bayes(object):
 
        elif(train_std_not_spam_data[i] == 0): 
         train_std_not_spam_data[i] = std
+       
+  # 3. Run Naive Bayes on the test data 
+  # use the Gaussian Naive Bayes algorithm to classify the instances in the test set 
+  def gaussian_algo(x, mean, stddeviation): 
+    N = float(1 / (np.sqrt(2 * np.pi) * stddeviation)) * float(np.exp(-((x - mean) ** 2) / (2 * float(stddeviation * stddeviation))))
+    return N 
+
+  for row in range(len(self.test_data)): 
+    probability_spam = np.log(probability_train_spam)
+    probability_not_spam = np.log(probability_train_not_spam)
+
+    for a_feature in range(0, features): 
 
 input = Naive_Bayes("spambase.data")
 print(input.train_data.shape)
