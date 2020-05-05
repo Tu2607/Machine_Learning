@@ -5,44 +5,58 @@
 
 import numpy as np
 from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import train_test_split
 
 # part I: classification with Naive Bayes
 # 1. create training and test set
 # split the data into a training and test set; each has 2300 instances, 
 # 40% spam and 60% not-spam
 class Naive_Bayes(object):
-  def __init__(own, file):
-    own.train_data, own.test_data = own.split(file)
-    
-  def split(own, file):
+  def __init__(self, file):
+    self.train_data, self.test_data, self.target_train, self.target_test = self.split(file)
+     
+  def split(self, file):
     data = np.loadtxt(file, delimiter = ",")
-    train_data = data[:2300, :] 
-    test_data = data[2301:, :]
-    return train_data, test_data
+    X, target = data[:, :-1], data[:, -1]
+    train_data, test_data, target_train, target_test = train_test_split(X, target, test_size = 0.50)
+    return train_data, test_data, target_train, target_test
 
-  def probability(own): 
-    # get the probability of the training set
-    for i in range(len(train_data)): 
-      if(train_data[i] == 1): 
-        train_spam_data += 1
-	
-    train_probability_spam = (train_spam / len(train_data))
-    train_probability_not_spam = 1 - train_probability_spam
-
-    # get the probability of the test set
-    for i in range(len(test_data)): 
-      if(test_data[i] == 1): 
-        test_spam_data += 1
+  def probabilistic_model(self): 
     
-    test_probability_spam = (test_spam / len(test_data))
-    test_probability_not_spam = 1 - test_probability_spam
+    # PROBABILITY IN THE TRAINING SET
+    # find the probability of the spam data in the training set 
+    for i in range(len(target_train)): 
+      if(target_train[i] == 1): 
+        train_spam_data += 1
+  
+    # the sum of the probability of the spam and not-spam data in the training set is 1  
+    probability_train_spam = train_spam_data / (len(target_train))
+    probability_train_not_spam = 1 - probabilty_train_spam
 
-input_data = Naive_Bayes("spambase.data")
+    # PROBABILITY IN THE TEST SET
+    # find the probability of the spam data in the test set
+    for i in range(len(target_test)): 
+      if(target_test[i] == 1): 
+        test_spam_data += 1
+  
+    # the sum of the probability of the spam and not-spam data in the test set is 1  
+    probability_test_spam = test_spam_data / (len(target_test))
+    probability_test_not_spam = 1 - probability_test_spam  
+
+    # MEAN AND STANDARD DEVIATION FOR FEATURES
+
+
+input = Naive_Bayes("spambase.data")
+print(input.train_data.shape)
+print(input.test_data.shape)
+print(input.target_train.shape)
+print(input.target_test.shape)
 
 # 2. create probabilistic model 
 # compute the prior priority for each class, 1 (spam), 0 (not-spam) in 
 # the training data. P(1) should be about 0.4
 train_spam_data = test_spam_data = train_probability = test_probability = 0
+train_spam_feature, train_not_spam_feature = [], []
 
 # for each of the 57 features, compute the mean and standard deviation in
 # the training set of the values given each class
