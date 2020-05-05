@@ -9,8 +9,8 @@ class Bayes(object):
 
     def splitData(self,filename):
         data = np.loadtxt(filename, delimiter= ",")
-        trainData = data[:2300,:] #Selecting 2300 rows for the trainData set, 1st half of the data
-        testData = data[2301:,:] #Selecting 2300 rows for the testData set, 2nd half of the data
+        trainData = data[:2300,:-2] #Selecting 2300 rows for the trainData set, 1st half of the data
+        testData = data[2301:,:-2] #Selecting 2300 rows for the testData set, 2nd half of the data
         return trainData, testData
 
     #Return a tuple of spam% and nonspam% for each class of training data
@@ -43,3 +43,4 @@ class Bayes(object):
     
     
 a = Bayes("spambase.data")
+print(a.trainData.shape)
