@@ -9,8 +9,8 @@ class Bayes(object):
 
     def splitData(self,filename):
         data = np.loadtxt(filename, delimiter= ",")
-        trainData = data[:2300,:-2] #Selecting 2300 rows for the trainData set, 1st half of the data
-        testData = data[2301:,:-2] #Selecting 2300 rows for the testData set, 2nd half of the data
+        trainData = data[:2300,:-1] #Selecting 2300 rows for the trainData set, 1st half of the data
+        testData = data[2301:,:-1] #Selecting 2300 rows for the testData set, 2nd half of the data
         return trainData, testData
 
     #Return a tuple of spam% and nonspam% for each class of training data
@@ -36,9 +36,9 @@ class Bayes(object):
         prior = []
         mean_SD = []
         for i in range(2300):
-            spam, nonspam = self.priorProb(self.trainData[i,:-2])
+            spam, nonspam = self.priorProb(self.trainData[i,:])
             prior.append((spam,nonspam)) 
-            mean_SD.append(self.mean_SD(self.trainData[i,:-2]))
+            mean_SD.append(self.mean_SD(self.trainData[i,:]))
         return np.asarray(prior), np.asarray(mean_SD)
     
     
