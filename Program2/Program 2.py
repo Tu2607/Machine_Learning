@@ -1,17 +1,19 @@
 import numpy as np
 from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 
 class Bayes(object):
     def __init__(self, filename):
-        self.trainData, self.testData = self.splitData(filename)
+        self.trainData, self.testData, self.trainTarget, self.testTarget = self.splitData(filename)
         self.TrainingpriorProb, self.trainingmeanSD = self.probModel()
 
     def splitData(self,filename):
-        data = np.loadtxt(filename, delimiter= ",")
-        trainData = data[:2300,:-1] #Selecting 2300 rows for the trainData set, 1st half of the data
-        testData = data[2301:,:-1] #Selecting 2300 rows for the testData set, 2nd half of the data
-        return trainData, testData
+        database = np.loadtxt(filename, delimiter= ",")
+        train, test = train_test_split(database, test_size = 0.50)
+        trainData, trainTarget = train[:, :-1], train[:, -1]
+        testData, testTarget = test[:, :-1], test[:, -1]
+        return trainData, testData, trainTarget, testTarget
 
     #Return a tuple of spam% and nonspam% for each class of training data
     def priorProb(self,array):
@@ -44,3 +46,4 @@ class Bayes(object):
     
 a = Bayes("spambase.data")
 print(a.trainData.shape)
+print(a.testData.shape)
