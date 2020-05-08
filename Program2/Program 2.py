@@ -33,11 +33,12 @@ class Bayes(object):
         spam = np.asarray(spam)        
         nonspam = np.asarray(nonspam)
 
+
         for i in range(features):
-            m[0,i] = np.mean(nonspam[i]) #Row 0 is the non spam
-            m[1,i] = np.mean(spam[i]) #Row 1 is the spam
-            std[0,i] = np.std(nonspam[i])
-            std[1,i] = np.std(spam[i])
+            m[0,i] = np.mean(nonspam.T[i]) #Row 0 is the non spam
+            m[1,i] = np.mean(spam.T[i]) #Row 1 is the spam
+            std[0,i] = np.std(nonspam.T[i])
+            std[1,i] = np.std(spam.T[i])
 
         #Special case checking
         for j in range(features):
@@ -56,17 +57,21 @@ class Bayes(object):
         return trainSpam_percent, trainNonspam_percent, train_mean_tuple, train_std_tuple
 
     #Reminder that row 0 is non spam, and row 1 is spam
+    #Work in progress, not sure of the input beside mean and std
     def PFC(self, mean, std):
-        features = mean.shape[1]
+        rows = self.testData.shape[0]
         P = []
         for i in range(2):
             product = 1
-            for j in range(features):
-                exponent = np.exp(-1 * ((self.testData[j] - mean[i,j])**2) / (2 * std[i,j]**2))
-                product = product * (1 / (np.sqrt(2*np.pi) * std[i,j]) * exponent)
+            for j in range(rows):
+                exponent = np.exp(-1 * ((self.testData[j] - mean[i])**2) / (2 * std[i]**2))
+                product = product * (1 / (np.sqrt(2*np.pi) * std[i]) * exponent)
             P.append(product)
-        return P
+        return np.asarray(P)
 
 a = Bayes("spambase.data")
 spam_percent, nspam_percent, mean, std = a.probModel()
+print(mean.shape)
+print(std.shape)
 b = a.PFC(mean,std)
+print(b.shape)
