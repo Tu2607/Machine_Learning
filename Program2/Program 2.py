@@ -14,7 +14,7 @@ class Bayes(object):
 
     def mean_std(self):
         features = self.trainData.shape[1]
-        m = np.ones((2, features))
+        m = np.ones((2, features)) #2 rows, one for spam(1) class, and one for nonspam(0) class
         std = np.ones((2, features))
 
         spam = []  #2d array of all the spam mail
@@ -31,7 +31,6 @@ class Bayes(object):
         #To make sure that it is an array
         spam = np.asarray(spam)        
         nonspam = np.asarray(nonspam)
-
         #Find the mean and std of each column within the spam and non spam array
         #For all 57 features
         for i in range(features):
@@ -47,40 +46,49 @@ class Bayes(object):
             if std[1,j] == 0:
                 std[1,j] = 0.0001
 
-        return m.astype(np.float64),std.astype(np.float64)
+        print(min(std[0]))
+        print(min(std[1]))
+        return m,std
 
     def probModel(self):
-        trainSpam_percent = (np.count_nonzero(self.trainTarget) / len(self.trainTarget)) * 100
-        trainNonspam_percent = 100 - trainSpam_percent
+        trainSpam_percent = (np.count_nonzero(self.trainTarget) / len(self.trainTarget))
+        trainNonspam_percent = 1 - trainSpam_percent
 
         train_mean_tuple, train_std_tuple = self.mean_std()
         return trainSpam_percent, trainNonspam_percent, train_mean_tuple, train_std_tuple
 
     #Reminder that row 0 is non spam, and row 1 is spam
-    #Work in progress, not sure of the input beside mean and std
-    #Mean and Std are 2d arrays of dimension (2,57)
+    #This function return the following:
+    #1. The probability of x given that it is not spam
+    #2. The probability of x given that it is spam
     def posteriorProb(self, x, mean, std, spam, nspam):
         pProb = np.ones(2)
+        
         for i in range(2):
             p = 0
             for j in range(len(x)):
-                exponent = np.exp(-(((x[j] - (mean[i][j])**2)) / (2 * std[i][j])))
-                p += np.log((1 / (np.sqrt(2 * np.pi) * std[i][j])) * exponent)
+                a = (x[j] - mean[i][j])**2
+                b = 2 * ((std[i][j])**2)
+                exponent = np.exp(-(a/b))
+                N = 1 / (np.sqrt(2*np.pi) * std[i][j])
+                p += np.log(N * exponent)
             if i == 0:
-                p += spam
+                p += np.log(nspam)
             elif i == 1:
-                p += nspam
+                p += np.log(spam)
             pProb[i] = p
         
         return pProb
 
+    #Predict the class based on Naive Bayes Algorithm
     def predict(self):
         spam_percent, nspam_percent, mean, std = self.probModel()
 
         prediction = []
         for rows in range(self.testData.shape[0]):
-            p = self.posteriorProb(self.testData[rows], mean, std, spam_percent, nspam_percent)
-            prediction.append(np.argmax(p))
+            #return the probability of each class (this is a tuple) per row 
+            p = self.posteriorProb(self.testData[rows], mean, std, spam_percent, nspam_percent) 
+            prediction.append(np.argmax(p)) #Append the index of the higher probability tuple into a list
         
         return np.asarray(prediction)
 
@@ -94,10 +102,6 @@ class Bayes(object):
         return accuracy
 
 a = Bayes("spambase.data")
-spam,nospam,mean,std = a.probModel()
-#b = a.predict()
-#c = a.accuracy(b)
-print(min(std[0]))
-print(min(std[1]))
-print(min(mean[0]))
-print(min(mean[0]))
+b = a.predict()
+c = a.accuracy(b)
+print(c)
