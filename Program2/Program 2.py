@@ -83,6 +83,7 @@ class Bayes(object):
                 p += np.log(spam)
 
             for j in range(len(x)):
+                #If x[j] is 0, and then mean[i][j] is also 0, we got issue
                 a = (x[j] - mean[i][j])**2 # <-- This is a problem. Apparently x[j] - mean[i][j] is 0. Relates to the mean_std
                 b = 2 * ((std[i][j])**2)
                 exponent = np.exp(-(a/b))
