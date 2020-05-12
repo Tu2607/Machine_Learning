@@ -12,7 +12,8 @@ class Bayes(object):
         database = np.loadtxt(filename, delimiter= ",")
         X = database[:, :-1]
         y = database[:, -1]
-        return train_test_split(X, y, test_size = 0.5)
+        X_train, X_test, y_train, y_test =  train_test_split(X, y, test_size = 0.5)
+        return X_train, X_test, y_train, y_test
 
     def mean_std(self):
         features = self.trainData.shape[1]
@@ -82,7 +83,7 @@ class Bayes(object):
                 p += np.log(spam)
 
             for j in range(len(x)):
-                a = (x[j] - mean[i][j])**2 # <-- This is a problem. Apparently x[j] - mean[i][j] is 0
+                a = (x[j] - mean[i][j])**2 # <-- This is a problem. Apparently x[j] - mean[i][j] is 0. Relates to the mean_std
                 b = 2 * ((std[i][j])**2)
                 exponent = np.exp(-(a/b))
                 N = 1 / (np.sqrt(2*np.pi) * std[i][j])
@@ -109,7 +110,7 @@ class Bayes(object):
             if prediction[i] == self.testTarget[i]:
                 correct += 1
         
-        accuracy = correct / len(self.testTarget) * 100
+        accuracy = correct / len(self.testTarget)
         return accuracy
 
     #For comparison
