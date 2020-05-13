@@ -7,6 +7,9 @@ from sklearn.naive_bayes import GaussianNB
 class Bayes(object):
     def __init__(self, filename):
         self.trainData, self.testData, self.trainTarget, self.testTarget = self.splitData(filename)
+        #For zero frequency problem
+        self.trainData = 1 + self.trainData
+        self.testData = 1 + self.testData
 
     def splitData(self,filename):
         database = np.loadtxt(filename, delimiter= ",")
@@ -34,8 +37,8 @@ class Bayes(object):
         #To make sure that it is an array
         spam = np.asarray(spam)        
         nonspam = np.asarray(nonspam)
-        #Find the mean and std of each column within the spam and non spam array
-        #For all 57 features
+
+        #Find the mean and std of each feature within the spam and non spam array
         for i in range(0,features):
             if np.count_nonzero(nonspam.T[i]) == 0:
                 print("We got a zero column in non spam")
@@ -62,6 +65,8 @@ class Bayes(object):
     def probModel(self):
         trainSpam_percent = (np.count_nonzero(self.trainTarget) / len(self.trainTarget))
         trainNonspam_percent = 1 - trainSpam_percent
+        print(trainSpam_percent)
+        print(trainNonspam_percent)
 
         train_mean_tuple, train_std_tuple = self.mean_std()
 
