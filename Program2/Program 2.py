@@ -49,10 +49,6 @@ class Bayes(object):
             if std[1,j] == 0:
                 std[1,j] = 0.0001
         
-        print("Minimum value in mean rows:")
-        print(min(m[0]))
-        print(min(m[1])) 
-
         return m,std
 
     def probModel(self):
@@ -80,13 +76,15 @@ class Bayes(object):
 
             for j in range(len(x)):
                 #If x[j] is 0, and then mean[i][j] is also 0, we got issue
+                if x[j] == mean[i][j]:
+                    continue
                 a = (x[j] - mean[i][j])**2 # <-- This is a problem. Apparently x[j] - mean[i][j] is 0. Relates to the mean_std
                 b = 2 * ((std[i][j])**2)
                 exponent = np.exp(-1 *(a/b))
                 N = 1 / (np.sqrt(2*np.pi) * std[i][j])
                 if N == 0 or exponent == 0:
-                    N = 0.00000000000000000000000000000000000000000000000000000000000000001 #64 zeroes
-                    exponent = 0.00000000000000000000000000000000000000000000000000000000000000001 
+                    N = 0.00000000000000000000000000000000000000000000000000000000000000001
+                    exponent = 0.00000000000000000000000000000000000000000000000000000000000000001
                 p += np.log(N * exponent)
 
             pProb[i] = p
@@ -113,6 +111,19 @@ class Bayes(object):
         accuracy = correct / len(self.testTarget)
         return accuracy
 
+    def precision_recall(self, prediction):
+        tp, tn, fp, fn = 0,0,0,0
+        for i in range(len(self.testTarget)):
+            if prediction[i]  == 1 and self.testTarget[i] == 1:
+                tp += 1
+            elif prediction[i] == 0 and self.testTarget[i] == 0:
+                tn += 1
+            elif prediction[i] == 1 and self.testTarget[i] == 0:
+                fp += 1
+            else:
+                fn += 1
+        return tp, tn, fp, fn
+
     #For comparison
     def GB(self):
         gnb = GaussianNB()
@@ -121,12 +132,20 @@ class Bayes(object):
         return metrics.accuracy_score(self.testTarget, y_pred)
 
 
-a = Bayes("spambase.data")
-b = a.predict()
-c = a.accuracy(b)
-d = a.GB()
+NaiveBayes = Bayes("spambase.data")
+prediction = NaiveBayes.predict()
+Accuracy = NaiveBayes.accuracy(prediction)
+tp, tn, fp, fn = NaiveBayes.precision_recall(prediction)
+precision = tp / (tp + fp)
+recall = tp / (tp + fn)
 
-print(confusion_matrix(a.testTarget, b))
-
-print(c)
-print(d)
+print("Confusion Matrix:")
+print(confusion_matrix(NaiveBayes.testTarget, prediction))
+print("Accuracy: ")
+print(Accuracy)
+print("GB accuracy:")
+print(NaiveBayes.GB())
+print("Precision: ")
+print(precision)
+print("Recall: ")
+print(recall)
