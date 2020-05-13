@@ -88,11 +88,12 @@ class Bayes(object):
                 #If x[j] is 0, and then mean[i][j] is also 0, we got issue
                 if mean[i][j] == x[j]:
                     continue
-                a = (x[j] - mean[i][j])**2 # <-- This is a problem. Apparently x[j] - mean[i][j] is 0. Relates to the mean_std
-                b = 2 * ((std[i][j])**2)
-                exponent = np.exp(-(a/b))
-                N = 1 / (np.sqrt(2*np.pi) * std[i][j])
-                p += np.log(N * exponent)
+                else:
+                    a = (x[j] - mean[i][j])**2 # <-- This is a problem. Apparently x[j] - mean[i][j] is 0. Relates to the mean_std
+                    b = 2 * ((std[i][j])**2)
+                    exponent = np.exp(-(a/b))
+                    N = 1 / (np.sqrt(2*np.pi) * std[i][j])
+                    p += np.log(N * exponent)
 
             pProb[i] = p
         return pProb
