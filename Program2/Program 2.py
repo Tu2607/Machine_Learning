@@ -7,9 +7,6 @@ from sklearn.naive_bayes import GaussianNB
 class Bayes(object):
     def __init__(self, filename):
         self.trainData, self.testData, self.trainTarget, self.testTarget = self.splitData(filename)
-        #For zero frequency problem
-        self.trainData = 1 + self.trainData
-        self.testData = 1 + self.testData
 
     def splitData(self,filename):
         database = np.loadtxt(filename, delimiter= ",")
@@ -89,6 +86,8 @@ class Bayes(object):
 
             for j in range(len(x)):
                 #If x[j] is 0, and then mean[i][j] is also 0, we got issue
+                if mean[i][j] == x[j]:
+                    continue
                 a = (x[j] - mean[i][j])**2 # <-- This is a problem. Apparently x[j] - mean[i][j] is 0. Relates to the mean_std
                 b = 2 * ((std[i][j])**2)
                 exponent = np.exp(-(a/b))
