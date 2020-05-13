@@ -85,8 +85,9 @@ class Bayes(object):
                 else:
                     a = (x[j] - mean[i][j])**2 # <-- This is a problem. Apparently x[j] - mean[i][j] is 0. Relates to the mean_std
                     b = 2 * ((std[i][j])**2)
-                    exponent = np.exp(-(a/b))
+                    exponent = np.exp(-1 *(a/b))
                     N = 1 / (np.sqrt(2*np.pi) * std[i][j])
+                    print(N)
                     p += np.log(N * exponent)
 
             pProb[i] = p
