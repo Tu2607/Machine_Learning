@@ -37,10 +37,6 @@ class Bayes(object):
 
         #Find the mean and std of each feature within the spam and non spam array
         for i in range(0,features):
-            if np.count_nonzero(nonspam.T[i]) == 0:
-                print("We got a zero column in non spam")
-            if np.count_nonzero(spam.T[i]) == 0:
-                print("We got a zero column in spam")
             m[0,i] = np.nanmean(nonspam.T[i]) #Row 0 is the non spam
             m[1,i] = np.nanmean(spam.T[i]) #Row 1 is the spam
             std[0,i] = np.std(nonspam.T[i]) #Row 0 is non spam
@@ -62,8 +58,6 @@ class Bayes(object):
     def probModel(self):
         trainSpam_percent = (np.count_nonzero(self.trainTarget) / len(self.trainTarget))
         trainNonspam_percent = 1 - trainSpam_percent
-        print(trainSpam_percent)
-        print(trainNonspam_percent)
 
         train_mean_tuple, train_std_tuple = self.mean_std()
 
@@ -86,7 +80,7 @@ class Bayes(object):
 
             for j in range(len(x)):
                 #If x[j] is 0, and then mean[i][j] is also 0, we got issue
-                if mean[i][j] == x[j]:
+                if x[j] == mean[i][j]:
                     continue
                 else:
                     a = (x[j] - mean[i][j])**2 # <-- This is a problem. Apparently x[j] - mean[i][j] is 0. Relates to the mean_std
