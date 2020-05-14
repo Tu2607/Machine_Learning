@@ -75,17 +75,14 @@ class Bayes(object):
                 p += np.log(spam)
 
             for j in range(len(x)):
-                #If x[j] is 0, and then mean[i][j] is also 0, we got issue
-                if x[j] == mean[i][j]:
-                    continue
                 a = (x[j] - mean[i][j])**2 # <-- This is a problem. Apparently x[j] - mean[i][j] is 0. Relates to the mean_std
                 b = 2 * ((std[i][j])**2)
                 exponent = np.exp(-1 *(a/b))
                 N = 1 / (np.sqrt(2*np.pi) * std[i][j])
-                if N == 0 or exponent == 0:
-                    N = 0.00000000000000000000000000000000000000000000000000000000000000001
-                    exponent = 0.00000000000000000000000000000000000000000000000000000000000000001
-                p += np.log(N * exponent)
+                probability = N * exponent
+                if probability == 0:
+                    probability = 10**-257
+                p += np.log(probability)
 
             pProb[i] = p
         return pProb
