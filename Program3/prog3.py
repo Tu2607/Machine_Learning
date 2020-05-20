@@ -4,6 +4,7 @@
 import numpy as np
 import math
 import collections
+import matplotlib.pyplot as pl
 import sys
 
 class kc_means(object):
@@ -66,12 +67,19 @@ class kc_means(object):
                 meanx = np.mean(clus.T[0]) ##I know this is hard coding
                 meany = np.mean(clus.T[1])
                 self.K[i] = [meanx,meany]
-    
+
+    #Add plotting here 
+    #Might change
     def kmeans(self):
+        pl.scatter(self.data.T[0], self.data.T[1])
+        pl.scatter(self.K.T[0], self.K.T[1], c = 'r')
+        pl.show()
         for i in range(self.iteration):
             cluster = self.assignmentK() #Return lists of cluster
             self.updateK(cluster)
-
+            pl.scatter(self.data.T[0], self.data.T[1])
+            pl.scatter(self.K.T[0], self.K.T[1], c = 'r')
+            pl.show()
 
 
 #The main function that read in the argument of how many cluster point
