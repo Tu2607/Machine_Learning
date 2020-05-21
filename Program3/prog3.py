@@ -76,11 +76,10 @@ class kc_means(object):
 
 #The main function that read in the argument of how many cluster point
 def main():
-    #clusterCount = sys.argv[1]
-    #iteration = sys.argv[2]
-    clusterCount = 5
-    iteration = 5
+    clusterCount = int(sys.argv[1])
+    iteration = int(sys.argv[2])
     a = kc_means("cluster_dataset.txt", clusterCount, iteration)
+    print(a.K)
     a.kmeans()
     
 
