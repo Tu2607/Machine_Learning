@@ -60,10 +60,12 @@ class kc_means(object):
     def updateK(self, cluster):
         assert (len(self.K) == len(cluster)), "Check in update()" #Check if the length of K is equal to the cluster we sent in
         for i in range(len(self.K)):
-            clus = np.asarray(cluster[i]) ## Turn the list into a 2d array
-            meanx = np.mean(clus.T[0]) ##I know this is hard coding
-            meany = np.mean(clus.T[1])
-            self.K[i] = [meanx,meany]
+            if cluster[i]:  #To make sure that there is something in the cluster
+                clus = np.asarray(cluster[i]) ## Turn the list into a 2d array
+                print(clus.shape)
+                meanx = np.mean(clus.T[0]) ##I know this is hard coding
+                meany = np.mean(clus.T[1])
+                self.K[i] = [meanx,meany]
     
     def kmeans(self):
         for i in range(self.iteration):
@@ -74,9 +76,12 @@ class kc_means(object):
 
 #The main function that read in the argument of how many cluster point
 def main():
-    clusterCount = sys.argv[1]
-    iteration = sys.argv[2]
+    #clusterCount = sys.argv[1]
+    #iteration = sys.argv[2]
+    clusterCount = 5
+    iteration = 5
     a = kc_means("cluster_dataset.txt", clusterCount, iteration)
+    a.kmeans()
     
 
 if __name__ == '__main__':
