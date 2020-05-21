@@ -24,24 +24,13 @@ class kc_means(object):
 
         return np.asarray(k)
 
-    #Return a list of distance between the data input to all the K values
+    #Return a list of distance between the data input to all the K means
     def EuclideDistance(self, data):
         distance = []
         for i in range(len(self.K)):
             d = np.linalg.norm(data -  self.K[i])
             distance.append(d)
         return np.asarray(distance)
-
-    def classification(self, distance):
-        cluster = 0
-        k = distance[0] 
-
-        for i in range(len(distance)):
-            if k < distance[i]: #I know it's a bit redundant but just bear with it for now
-                k = distance[i]
-                cluster = i
-
-        return cluster #return the cluster index that observation belong to
 
     #Assigning each observation to a class
     def assignmentK(self):
@@ -50,7 +39,7 @@ class kc_means(object):
         #Go through each observation and assign it a cluster
         for i in range(self.data.shape[0]):
            distances = self.EuclideDistance(self.data[i])  #Calculate the mean distance for each observation against the Ks
-           group[self.classification(distances)].append(self.data[i])
+           group[np.argmin(distances)].append(self.data[i]) #argmin determin which cluster it belong
         
         return group
 
@@ -61,37 +50,45 @@ class kc_means(object):
         #Updating each centroid value
         for i in range(len(self.K)):
             clus = np.asarray(cluster[i]) ## Turn the list into a 2d array
-            print(clus.shape)
+            #print(clus.shape)
             new = np.sum(clus, axis = 0) / clus.shape[0] # <-- CHECK MAH MATH HEREEEEE!!!!!
             self.K[i] = new
+        #print()
         return self.K
 
     #sum square error calculation
-    def mse(self,cluster):
-        cmse = []
+    def sse(self,cluster):
+        sse = 0
         for i in range(len(self.K)):
             x = np.asarray(cluster[i])
             d = 0
             for j in range(x.shape[0]):
-                d += (x[j] - self.K[i])**2 # <-- Check math here
-
-            print(d) #for testing
-            cmse.append(d) #Sum of squared divide by cardinality of cluster
-        
-        MSE = sum(cmse) / len(self.K)
-        return MSE
+                d += (x[j] - self.K[i])**2 # <-- sum of error in each cluster
+            sse += d # <-- sum of all the error in all clusters
+            
+        return np.asarray(sse) 
 
     #Add plotting here 
     #Still need to add in the sum square error calculation
     def kmeans(self):
         allK = [[] for _ in range(self.iteration)] #Might not need this if I come up with a better way
+        sse = []
+        pl.scatter(self.data.T[0], self.data.T[1])
+        pl.scatter(self.K.T[0], self.K.T[1], c = 'r')
+        pl.show()
+        cluster = self.assignmentK() #Assigning the initial clusters
 
         for i in range(self.iteration):
-            cluster = self.assignmentK() #Return lists of cluster
-            #self.mse(cluster,self.K)
-
             allK[i].append(self.updateK(cluster))
-            #Calculate Sum Square error here?
+            cluster = self.assignmentK()
+            sse.append(self.sse(cluster)) #Calculate the sum square error 
+
+            pl.scatter(self.data.T[0], self.data.T[1])
+            pl.scatter(self.K.T[0], self.K.T[1], c = 'r')
+            pl.show()
+        
+        print(sse)
+
 
 
 #The main function that read in the argument of how many cluster point
@@ -107,14 +104,5 @@ def main():
     elif choice == 'c':
         print("Wait here")
     
-
 if __name__ == '__main__':
     main()
-
-
-
-    """
-        pl.scatter(self.data.T[0], self.data.T[1])
-        pl.scatter(self.K.T[0], self.K.T[1], c = 'r')
-        pl.show()
-        """
