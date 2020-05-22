@@ -2,7 +2,6 @@
 #Program 3
 
 import numpy as np
-import collections
 import matplotlib.pyplot as pl
 import sys
 
@@ -105,6 +104,7 @@ class kc_means(object):
             a = (self.data.T * self.coefficient.T[i]).T 
             c = np.sum(a, axis = 0) / np.sum(self.coefficient.T[i])
             centroid.append(c)
+        print(np.array(centroid))
         return np.asarray(centroid)
 
     #Calculate the distance of each observation from centroids
@@ -125,13 +125,28 @@ class kc_means(object):
                 c = 0
                 n = distances[i][j]
                 for k in range(self.clusterCount):
-                    c += (n / distances[i][k]) ** (2 / (self.clusterCount - 1))
+                    c += (n / distances[i][k]) ** (2 / (2 - 1)) # Check the m value in the equation
                 self.coefficient[i][j] = 1 / c
 
     def cmeans(self):
-        return 0
+        for i in range(self.iteration):
+            centroid = self.cCentroid()
+            distance = self.cDistance(centroid)
+            self.updateCoeff(distance)
+        self.cplot() 
 
-
+    #Testing with plotting, this is for 3 cluster
+    def cplot(self):
+        for i in range(self.data.shape[0]):
+            if np.argmax(self.coefficient[i]) == 0:
+                pl.scatter(self.data[i][0], self.data[i][1], c = 'r')
+            if np.argmax(self.coefficient[i]) == 1:
+                pl.scatter(self.data[i][0], self.data[i][1], c = 'b')
+            if np.argmax(self.coefficient[i]) == 2:
+                pl.scatter(self.data[i][0], self.data[i][1], c = 'g')
+            
+            #pl.scatter(centroid.T[0], centroid.T[1], c = 'r')
+        pl.show()
 
 #The main function that read in the argument of how many cluster point
 def main():
@@ -144,7 +159,7 @@ def main():
     if choice == 'k':
         a.kmeans()
     elif choice == 'c':
-        print("Wait here")
+        a.cmeans()
     
 if __name__ == '__main__':
     main()
