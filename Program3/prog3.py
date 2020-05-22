@@ -2,7 +2,6 @@
 #Program 3
 
 import numpy as np
-import math
 import collections
 import matplotlib.pyplot as pl
 import sys
@@ -14,6 +13,7 @@ class kc_means(object):
         self.iteration =  iteration
 
         self.K = self.selectK() 
+        self.coefficient = self.randomCoefficient()
 
     #Initial means
     def selectK(self):
@@ -21,9 +21,8 @@ class kc_means(object):
         index = np.random.choice(self.data.shape[0], self.clusterCount, replace = False)
         for i in index:
             k.append(self.data[i])
-
         return np.asarray(k)
-
+        
     #Return a list of distance between the data input to all the K means
     def EuclideDistance(self, data):
         distance = []
@@ -38,7 +37,7 @@ class kc_means(object):
 
         #Go through each observation and assign it a cluster
         for i in range(self.data.shape[0]):
-           distances = self.EuclideDistance(self.data[i])  #Calculate the mean distance for each observation against the Ks
+           distances = self.EuclideDistance(self.data[i])  #Calculate the mean distance for each observation against all the K means
            group[np.argmin(distances)].append(self.data[i]) #argmin determin which cluster it belong
         
         return group
@@ -70,6 +69,7 @@ class kc_means(object):
 
     #Add plotting here 
     #Still need to add in the sum square error calculation
+    #Still need to report the best K from "r" iteration
     def kmeans(self):
         allK = [[] for _ in range(self.iteration)] #Might not need this if I come up with a better way
         sse = []
@@ -88,6 +88,48 @@ class kc_means(object):
             pl.show()
         
         print(sse)
+    ###################################################################
+    #######################FUZZY-C MEANS SECTION#######################
+    #Generate random coefficient for each observation 
+    def randomCoefficient(self):
+        C = []
+        for i in range(self.data.shape[0]):
+            coeff = np.random.uniform(0.0, 1.0, (self.clusterCount,))
+            C.append(coeff)
+        return np.asarray(C)
+
+    #Centroid calculation for fuzzy-c means
+    def cCentroid(self):
+        centroid = []
+        for i in range(self.clusterCount):
+            a = (self.data.T * self.coefficient.T[i]).T 
+            c = np.sum(a, axis = 0) / np.sum(self.coefficient.T[i])
+            centroid.append(c)
+        return np.asarray(centroid)
+
+    #Calculate the distance of each observation from centroids
+    #Remember to check this part
+    def cDistance(self,centroid):
+        distance = []
+        for i in range(self.data.shape[0]):
+            d = []
+            for k in range(self.clusterCount):
+                d.append(np.linalg.norm(self.data[i] - centroid[k])) 
+            distance.append(np.asarray(d))
+        return np.asarray(distance)
+
+    #Check this garbage code...I developed cancer writing this function
+    def updateCoeff(self, distances):
+        for i in range(self.data.shape[0]):
+            for j in range(self.clusterCount):
+                c = 0
+                n = distances[i][j]
+                for k in range(self.clusterCount):
+                    c += (n / distances[i][k]) ** (2 / (self.clusterCount - 1))
+                self.coefficient[i][j] = 1 / c
+
+    def cmeans(self):
+        return 0
 
 
 
