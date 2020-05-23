@@ -61,7 +61,7 @@ class kc_means(object):
             x = np.asarray(cluster[i])
             d = 0
             for j in range(x.shape[0]):
-                d += (x[j] - self.K[i])**2 # <-- sum of error in each cluster
+                d += (np.linalg.norm(x[j] - self.K[i]))**2 # <-- sum of error in each cluster
             sse += d # <-- sum of all the error in all clusters
             
         return np.asarray(sse) 
@@ -127,6 +127,17 @@ class kc_means(object):
                 for k in range(self.clusterCount):
                     c += (n / distances[i][k]) ** (2 / (2 - 1)) # Check the m value in the equation
                 self.coefficient[i][j] = 1 / c
+
+    #Objective function of finding the smallest possible error
+    def cErrors(self,centroid):
+        minError = []
+        for i in range(self.data.shape[0]):
+            e = 0
+            for j in range(self.clusterCount): #<-- check this part here
+                e += self.coefficient[i][j] * (np.linalg.norm(self.data[i] - centroid[j]))**2
+            minError.append(e)
+        minError = np.asarray(minError)
+        return np.sum(minError)
 
     def cmeans(self):
         for i in range(self.iteration):
