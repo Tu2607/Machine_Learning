@@ -61,10 +61,10 @@ class kc_means(object):
             x = np.asarray(cluster[i])
             d = 0
             for j in range(x.shape[0]):
-                d += (np.linalg.norm(x[j] - self.K[i]))**2 # <-- sum of error in each cluster
+                d += (np.linalg.norm(x[j] - self.K[i]))**2 # <-- sum of squared error in each cluster
             sse += d # <-- sum of all the error in all clusters
             
-        return np.asarray(sse) 
+        return sse
 
     #Add plotting here 
     #Still need to add in the sum square error calculation
@@ -80,7 +80,7 @@ class kc_means(object):
         for i in range(self.iteration):
             allK[i].append(self.updateK(cluster))
             cluster = self.assignmentK()
-            sse.append(self.sse(cluster)) #Calculate the sum square error 
+            sse.append(self.sse(cluster)) #Calculate the sum square error for each iteration
 
             pl.scatter(self.data.T[0], self.data.T[1])
             pl.scatter(self.K.T[0], self.K.T[1], c = 'r')
@@ -130,14 +130,13 @@ class kc_means(object):
 
     #Objective function of finding the smallest possible error
     def cErrors(self,centroid):
-        minError = []
+        error = 0
         for i in range(self.data.shape[0]):
             e = 0
             for j in range(self.clusterCount): #<-- check this part here
                 e += self.coefficient[i][j] * (np.linalg.norm(self.data[i] - centroid[j]))**2
-            minError.append(e)
-        minError = np.asarray(minError)
-        return np.sum(minError)
+            error += e
+        return error
 
     def cmeans(self):
         for i in range(self.iteration):
