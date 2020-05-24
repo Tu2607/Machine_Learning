@@ -25,7 +25,7 @@ class kc_means(object):
             k.append(self.data[i])
         return np.asarray(k)
         
-    #Return a list of distance between the data input to all the K means
+    #Return a list of distance between a single data input to all the K means
     def EuclideDistance(self, data):
         distance = []
         for i in range(len(self.K)):
@@ -40,21 +40,19 @@ class kc_means(object):
         #Go through each observation and assign it a cluster
         for i in range(self.data.shape[0]):
            distances = self.EuclideDistance(self.data[i])  #Calculate the mean distance for each observation against all the K means
-           group[np.argmin(distances)].append(self.data[i]) #argmin determin which cluster it belong
+           group[np.argmin(distances)].append(self.data[i]) #argmin determin which cluster it belong based on how close it is
         
         return group
 
     #Updating the K centroid   
-    #cluster is the return value from function assignment 
+    #cluster argument is the return value from function assignment 
     def updateK(self, cluster):
         assert (len(self.K) == len(cluster)), "Check in update()" #Check if the length of K is equal to the cluster we sent in
         #Updating each centroid value
         for i in range(len(self.K)):
             clus = np.asarray(cluster[i]) ## Turn the list into a 2d array
-            #print(clus.shape)
-            new = np.sum(clus, axis = 0) / clus.shape[0] # <-- CHECK MAH MATH HEREEEEE!!!!!
+            new = np.mean(clus, axis = 0) ## Calculate the mean up each cluster to be the new centroid
             self.K[i] = new
-        #print()
         return self.K
 
     #sum square error calculation
@@ -68,15 +66,14 @@ class kc_means(object):
             sse += d # <-- sum of all the error in all clusters
             
         return sse
-
-    #Add plotting here 
-    #Still need to add in the sum square error calculation
-    #Still need to report the best K from "r" iteration
+    
     def kmeans(self):
         sse = []
+        #Initial plot
         pl.scatter(self.data.T[0], self.data.T[1])
         pl.scatter(self.K.T[0], self.K.T[1], c = 'r')
         pl.show()
+
         cluster = self.assignmentK() #Assigning the initial clusters
 
         for i in range(self.iteration):
