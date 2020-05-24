@@ -1,5 +1,8 @@
 #Tu Vu
 #Program 3
+#How to run this
+#python3 prog3.py k 2 2  <-- for k-means with 2 clusters for 2 iteration
+#Change the k to c to run c means
 
 import numpy as np
 import matplotlib.pyplot as pl
@@ -70,7 +73,6 @@ class kc_means(object):
     #Still need to add in the sum square error calculation
     #Still need to report the best K from "r" iteration
     def kmeans(self):
-        allK = [[] for _ in range(self.iteration)] #Might not need this if I come up with a better way
         sse = []
         pl.scatter(self.data.T[0], self.data.T[1])
         pl.scatter(self.K.T[0], self.K.T[1], c = 'r')
@@ -78,15 +80,18 @@ class kc_means(object):
         cluster = self.assignmentK() #Assigning the initial clusters
 
         for i in range(self.iteration):
-            allK[i].append(self.updateK(cluster))
+            self.updateK(cluster)
             cluster = self.assignmentK()
             sse.append(self.sse(cluster)) #Calculate the sum square error for each iteration
 
             pl.scatter(self.data.T[0], self.data.T[1])
             pl.scatter(self.K.T[0], self.K.T[1], c = 'r')
             pl.show()
-        
-        print(sse)
+
+        print("The iteration with the smallest sum of squared error:")
+        print(np.argmin(np.array(sse)) + 1)
+
+
     ###################################################################
     #######################FUZZY-C MEANS SECTION#######################
     #Generate random coefficient for each observation 
