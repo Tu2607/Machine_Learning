@@ -1,11 +1,8 @@
 #Tu Vu
 #Program 3
-#How to run this
-#python3 prog3.py k 2 2  <-- for k-means with 2 clusters for 2 iteration
-#Change the k to c to run c means
-
 import numpy as np
 import matplotlib.pyplot as pl
+from copy import deepcopy
 import sys
 
 class kc_means(object):
@@ -13,7 +10,6 @@ class kc_means(object):
         self.data = np.loadtxt(filename)
         self.clusterCount = clusterCount
         self.iteration =  iteration
-
         self.K = self.selectK() 
         self.coefficient = self.randomCoefficient()
 
@@ -64,29 +60,37 @@ class kc_means(object):
             for j in range(x.shape[0]):
                 d += (np.linalg.norm(x[j] - self.K[i]))**2 # <-- sum of squared error in each cluster
             sse += d # <-- sum of all the error in all clusters
-            
         return sse
-    
-    def kmeans(self):
-        sse = []
-        #Initial plot
-        pl.scatter(self.data.T[0], self.data.T[1])
-        pl.scatter(self.K.T[0], self.K.T[1], c = 'r')
+
+    #A little bit of hard coding 
+    def kplot(self, cluster):
+        for i in range(len(cluster)):
+            x = np.asarray(cluster[i])
+            pl.scatter(x.T[0], x.T[1], cmap = pl.get_cmap('rainbow'))
+            pl.scatter(self.K.T[0], self.K.T[1], c = '#000000')
         pl.show()
 
+    def kmeans(self):
+        sse = []
+        allCluster = []
+
         cluster = self.assignmentK() #Assigning the initial clusters
+        self.kplot(cluster)
 
         for i in range(self.iteration):
             self.updateK(cluster)
+            print(self.K)
+            print()
+            x = deepcopy(self.K)
+            allCluster.append(x)
             cluster = self.assignmentK()
             sse.append(self.sse(cluster)) #Calculate the sum square error for each iteration
+            self.kplot(cluster) 
 
-            pl.scatter(self.data.T[0], self.data.T[1])
-            pl.scatter(self.K.T[0], self.K.T[1], c = 'r')
-            pl.show()
-
-        print("The iteration with the smallest sum of squared error:")
-        print(np.argmin(np.array(sse)) + 1)
+        print("The ith iteration and its set of centroids that have the smallest sum of squared error:")
+        smol = np.argmin(np.array(sse))
+        print(smol + 1)
+        print(allCluster[smol])
 
 
     ###################################################################
