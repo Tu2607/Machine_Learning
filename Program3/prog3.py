@@ -114,7 +114,6 @@ class kc_means(object):
         return np.asarray(centroid)
 
     #Calculate the distance of each observation from centroids
-    #Remember to check this part
     def cDistance(self,centroid):
         distance = []
         for i in range(self.data.shape[0]):
@@ -124,7 +123,7 @@ class kc_means(object):
             distance.append(np.asarray(d))
         return np.asarray(distance)
 
-    #Check this garbage code...I developed cancer writing this function
+    
     def updateCoeff(self, distances):
         for i in range(self.data.shape[0]):
             for j in range(self.clusterCount):
